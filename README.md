@@ -354,7 +354,7 @@ import App from './App';
 
 createApp(App).use(ZiggyVue, Ziggy);
 
-// Vue 2
+// Vue 2 & 3
 import Vue from 'vue'
 import { ZiggyVue } from 'ziggy';
 import { Ziggy } from './ziggy';
@@ -371,6 +371,28 @@ Now you can use `route()` anywhere in your Vue components and templates, like so
 ```html
 <a class="nav-link" :href="route('home')">Home</a>
 ```
+
+To use it in a vue 3 setup function
+
+```js
+import { useRoute } from 'ziggy';
+
+export default {
+  setup() {
+    const route = useRoute();
+    // You don't need to export it to the component as this is already done by the plugin
+    return {}
+  },
+}
+```
+
+If the route global method conflicts with other libraries because it declares a route prop or route method internally (which is quite common) it is recommended to rename the global property, you can do so with the third parameter of the plugin.  
+
+```js
+Vue.use(ZiggyVue, Ziggy, '$route')
+```
+
+Don't forget to replace all your usages of `route` with your new name (`$route` in the previous example)
 
 #### React
 
