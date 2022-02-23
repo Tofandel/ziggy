@@ -394,6 +394,27 @@ Vue.use(ZiggyVue, Ziggy, '$route')
 
 Don't forget to replace all your usages of `route` with your new name (`$route` in the previous example)
 
+Or if you don't want to install the vue global method
+
+```js
+Vue.use(ZiggyVue, Ziggy, false)
+```
+
+In which case you will need to manually import route into your components
+
+```js
+import { useRoute } from 'ziggy';
+
+export default {
+  setup() {
+    const route = useRoute();
+    return {
+        route
+    }
+  },
+}
+```
+
 #### React
 
 To use Ziggy with React, start by importing the `route()` function and your Ziggy config. Because the Ziggy config object is not available globally in this setup, you'll have to pass it to the `route()` function manually:

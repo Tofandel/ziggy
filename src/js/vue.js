@@ -5,12 +5,14 @@ let installedRoute = null;
 export const ZiggyVue = {
     install: (v, options, property = 'route') => {
         installedRoute = (name, params, absolute, config = options) => route(name, params, absolute, config);
-        v.config && (v.config.globalProperties[property] = installedRoute);
-        v.mixin && v.mixin({
-            methods: {
-                [property]: installedRoute,
-            },
-        });
+        if (property) {
+            v.config && (v.config.globalProperties[property] = installedRoute);
+            v.mixin && v.mixin({
+                methods: {
+                    [property]: installedRoute,
+                },
+            });
+        }
     },
 };
 
