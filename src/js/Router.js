@@ -18,12 +18,8 @@ export default class Router extends String {
         this._config = { ...this._config, absolute };
 
         if (name) {
-            if (!this._config.routes[name]) {
-                throw new Error(`Ziggy error: route '${name}' is not in the route list.`);
-            }
-
-            this._route = new Route(name, this._config.routes[name], this._config);
-            this._params = this._parse(params);
+            this._name = name;
+            this._params = params;
         }
     }
 
@@ -37,13 +33,36 @@ export default class Router extends String {
      * @return {String}
      */
     toString() {
-        // Get parameters that don't correspond to any route segments to append them to the query
-        const unhandled = Object.keys(this._params)
-            .filter((key) => !this._route.parameterSegments.some(({ name }) => name === key))
-            .filter((key) => key !== '_query')
-            .reduce((result, current) => ({ ...result, [current]: this._params[current] }), {});
+        return this.resolve({name: this._name, params: this._params});
+    }
 
-        return this._route.compile(this._params) + stringify({ ...unhandled, ...this._params['_query'] }, {
+    /**
+     * Get the compiled URL string for the named route and parameters.
+     *
+     * @param {string} [name] Route name
+     * @param {Object|string} [params] Route parameters
+     * @param {Object} [query] Query parameters
+     * @returns {string}
+     */
+    resolve({name, params, query}) {
+        if (!name) {
+            return window.location.toString();
+        }
+
+        if (!this._config.routes[name]) {
+            throw new Error(`Ziggy error: route '${name}' is not in the route list.`);
+        }
+
+        const route = new Route(name, this._config.routes[name], this._config);
+        const segments = route.parameterSegments;
+        const {_query, ...parsedParams} = this._parse(params, route);
+
+        // Get parameters that don't correspond to any route segments to append them to the query
+        const unhandled = Object.keys(parsedParams)
+            .filter((key) => !segments.some(({ name }) => name === key))
+            .reduce((result, current) => ({ ...result, [current]: parsedParams[current] }), {});
+
+        return route.compile(parsedParams) + stringify({ ...unhandled, ..._query, ...query }, {
             addQueryPrefix: true,
             arrayFormat: 'indices',
             encodeValuesOnly: true,
@@ -180,7 +199,7 @@ export default class Router extends String {
      * @param {Route} route - Route instance.
      * @return {Object} Normalized complete route parameters.
      */
-    _parse(params = {}, route = this._route) {
+    _parse(params = {}, route) {
         // If `params` is a string or integer, wrap it in an array
         params = ['string', 'number'].includes(typeof params) ? [params] : params;
 
