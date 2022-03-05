@@ -123,6 +123,7 @@ export default class Router extends String {
 
         const matchedParams = {...currentParams, ...query};
 
+        // If a name wasn't passed, return the name of the current route
         if (!name) return current;
 
         // Test the passed name against the current route, matching some
