@@ -208,6 +208,7 @@ beforeAll(() => {
 
 beforeEach(() => {
     window.location = { ...defaultWindow.location };
+    window.location.toString = () => window.location.protocol + '//' + window.location.host + window.location.pathname + window.location.search + window.location.hash;
     global.window.location = window.location;
     global.Ziggy = { ...defaultZiggy };
 });
@@ -1067,6 +1068,7 @@ describe('current()', () => {
                 },
             },
             location: {
+                protocol: 'https:',
                 host: 'ziggy.dev',
                 pathname: '/events/1/venues/2',
                 search: '?user=Jacob&id=9',
