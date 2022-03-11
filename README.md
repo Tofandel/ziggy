@@ -305,10 +305,30 @@ const Ziggy = {
 export { Ziggy };
 ```
 
-You can optionally create a webpack alias to make importing Ziggy's core source files easier:
+You can optionally create a webpack alias and a before script to make generating and importing Ziggy's core source files easier:
 
 ```js
 // webpack.mix.js
+const {exec} = require('child_process');
+
+mix.before(async () => {
+  return new Promise((resolve, reject) => {
+    const process = exec('php artisan ziggy:generate');
+    process.stdout.on('data', (data) => {
+      console.log(data);
+    });
+    process.stderr.on('data', (data) => {
+      console.error(data);
+    });
+    process.on('exit', code => {
+      if (code !== 0) {
+        reject();
+      } else {
+        resolve();
+      }
+    });
+  });
+});
 
 // Mix v6
 const path = require('path');
@@ -340,6 +360,19 @@ import { Ziggy } from './ziggy';
 // ...
 
 route('home', undefined, undefined, Ziggy);
+```
+
+##### Watcher
+
+> :warning: **The following requires ext-inotify to be installed on your php handler**
+
+During development you may want to watch for changes in your routes and automatically regenerate the file, you just need to run the same command with the `--watch` option
+
+`php artisan ziggy:generate ./resources/js/public.js --group ./resources/js/admin.js --group=admin --watch`
+
+If you're using laravel mix, for instance, you could change your watch script in your package.json to
+```
+"watch": "php artisan ziggy:generate --watch & mix watch",
 ```
 
 #### Vue
