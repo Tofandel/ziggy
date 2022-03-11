@@ -57,7 +57,9 @@ export default class Route {
      * @return {Object|false} - If this route matches, returns the matched parameters.
      */
     matchesUrl(url) {
-        if (!this.definition.methods.includes('GET')) return false;
+        if (!this.definition.methods.includes('GET')) {
+            return false;
+        }
 
         // Transform the route's template into a regex that will match a hydrated URL,
         // by replacing its parameter segments with matchers for parameter values
@@ -84,12 +86,14 @@ export default class Route {
     compile(params) {
         const segments = this.parameterSegments;
 
-        if (!segments.length) return this.template;
+        if (!segments.length) {
+            return this.template;
+        }
 
         return this.template.replace(/{([^}?]+)(\??)}/g, (_, segment, optional) => {
             // If the parameter is missing but is not optional, throw an error
             if (!optional && [null, undefined].includes(params[segment])) {
-                throw new Error(`Ziggy error: '${segment}' parameter is required for route '${this.name}'.`)
+                throw new Error(`Ziggy error: '${segment}' parameter is required for route '${this.name}'.`);
             }
 
             if (segments[segments.length - 1].name === segment && this.wheres[segment] === '.*') {
