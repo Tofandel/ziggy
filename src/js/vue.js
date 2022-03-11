@@ -1,20 +1,16 @@
 import route from './index.js';
 
-let installedRoute = null;
-
 export const ZiggyVue = {
-    install: (v, options, property = 'route') => {
-        installedRoute = (name, params, absolute, config = options) => route(name, params, absolute, config);
-        if (property) {
-            v.config && (v.config.globalProperties[property] = installedRoute);
+    install: (v, options, property = 'route', exposeGlobal = true) => {
+        const r = (name, params, absolute, config = options) => route(name, params, absolute, config);
+        if (exposeGlobal) {
+            v.config && (v.config.globalProperties[property] = r);
             v.mixin && v.mixin({
                 methods: {
-                    [property]: installedRoute,
+                    [property]: r,
                 },
             });
         }
+        v.provide && v.provide(property, r);
     },
 };
-
-
-export const useRoute = () => installedRoute;

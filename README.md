@@ -375,11 +375,11 @@ Now you can use `route()` anywhere in your Vue components and templates, like so
 To use it in a vue 3 setup function
 
 ```js
-import { useRoute } from 'ziggy';
+import { inject } from 'vue';
 
 export default {
   setup() {
-    const route = useRoute();
+    const route = inject('route');
     // You don't need to export it to the component as this is already done by the plugin
     return {}
   },
@@ -397,17 +397,17 @@ Don't forget to replace all your usages of `route` with your new name (`$route` 
 Or if you don't want to install the vue global method
 
 ```js
-Vue.use(ZiggyVue, Ziggy, false)
+Vue.use(ZiggyVue, Ziggy, 'route', false)
 ```
 
 In which case you will need to manually import route into your components
 
 ```js
-import { useRoute } from 'ziggy';
+import { inject } from 'vue';
 
 export default {
   setup() {
-    const route = useRoute();
+    const route = inject('route');
     return {
         route
     }
