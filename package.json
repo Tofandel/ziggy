@@ -1,14 +1,14 @@
 {
-    "name": "ziggy-js",
-    "version": "1.4.4",
+    "name": "@tofandel/ziggy-js",
+    "version": "1.5.1",
     "description": "Use your Laravel named routes in JavaScript.",
     "keywords": [
         "laravel",
         "routes",
         "ziggy"
     ],
-    "homepage": "https://github.com/tighten/ziggy",
-    "bugs": "https://github.com/tighten/ziggy/issues",
+    "homepage": "https://github.com/tofandel/ziggy",
+    "bugs": "https://github.com/tofandel/ziggy/issues",
     "license": "MIT",
     "authors": [
         {
@@ -37,7 +37,7 @@
     "esmodule": "dist/index.es.js",
     "repository": {
         "type": "git",
-        "url": "https://github.com/tighten/ziggy.git"
+        "url": "https://github.com/tofandel/ziggy.git"
     },
     "scripts": {
         "build": "microbundle --name route --format modern,es,umd --external none --no-sourcemap",
