@@ -65,7 +65,7 @@ export default class Route {
         // by replacing its parameter segments with matchers for parameter values
         const pattern = this.template
             .replace(/(\/?){([^}?]*)(\??)}/g, (_, slash, segment, optional) => {
-                const regex = `(?<${segment}>${this.wheres[segment] || '[^/?]+'})`;
+                const regex = `(?<${segment}>${this.wheres[segment]?.replace(/(^\^)|(\$$)/g, '') || '[^/?]+'})`;
                 return optional ? `(${slash}${regex})?` : `${slash}${regex}`;
             })
             .replace(/^\w+:\/\//, '');
@@ -104,7 +104,7 @@ export default class Route {
             }
 
             if (segments[segments.length - 1].name === segment && this.wheres[segment] === '.*') {
-                return encodeURIComponent(params[segment] ?? '').replaceAll('%2F', '/');
+                return encodeURIComponent(params[segment] ?? '').replace(/%2F/g, '/');
             }
 
             if (this.wheres[segment] && !new RegExp(`^${optional ? `(${this.wheres[segment]})?` : this.wheres[segment]}$`).test(params[segment] ?? '')) {

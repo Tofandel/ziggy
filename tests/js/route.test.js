@@ -383,6 +383,13 @@ describe('route()', () => {
         same(route('optional', { id: 123, slug: null }), 'https://ziggy.dev/optional/123');
     });
 
+    test('can ignore a single optional parameter', () => {
+        same(route('pages.optional'), 'https://ziggy.dev/optionalpage');
+        same(route('pages.optional', {}), 'https://ziggy.dev/optionalpage');
+        same(route('pages.optional', undefined), 'https://ziggy.dev/optionalpage');
+        same(route('pages.optional', null), 'https://ziggy.dev/optionalpage');
+    });
+
     test('can error if a route name doesn’t exist', () => {
         throws(() => route('unknown-route'), /Ziggy error: route 'unknown-route' is not in the route list\./);
     });
@@ -617,6 +624,7 @@ describe('route()', () => {
     test('can skip encoding slashes inside last parameter when explicitly allowed', () => {
         same(route('slashes', ['one/two', 'three/four']), 'https://ziggy.dev/slashes/one%2Ftwo/three/four');
         same(route('slashes', ['one/two', 'Fun&Games/venues']), 'https://ziggy.dev/slashes/one%2Ftwo/Fun%26Games/venues');
+        same(route('slashes', ['one/two/three', 'Fun&Games/venues/outdoors']), 'https://ziggy.dev/slashes/one%2Ftwo%2Fthree/Fun%26Games/venues/outdoors');
     });
 });
 
@@ -790,6 +798,27 @@ describe('current()', () => {
 
         global.window.location.search = '?ab=cd&ef=1&dd';
         deepEqual(route().params, {digit: '12', required: 'different_but_required', optional: 'optional', extension: undefined, ab: 'cd', ef: '1', dd: ''});
+    });
+
+    test('can strip regex start and end of string tokens from wheres', () => {
+        global.Ziggy = undefined;
+        global.window.location.pathname = '/workspace/processes';
+
+        const config = {
+            url: 'https://ziggy.dev',
+            port: null,
+            routes: {
+                'workspaces.processes.index': {
+                    uri: '{workspace}/processes',
+                    methods: ['GET', 'HEAD'],
+                    wheres: {
+                        workspace: '^(?!api|nova-api|horizon).*$',
+                    },
+                },
+            },
+        };
+
+        same(route(undefined, undefined, undefined, config).current(), 'workspaces.processes.index');
     });
 
     test('can check the current route name at a URL with a non-delimited parameter', () => {

@@ -30,7 +30,7 @@ class BladeRouteGeneratorTest extends TestCase
 
         BladeRouteGenerator::$generated = false;
         $output = (new BladeRouteGenerator)->generate();
-        $ziggy = json_decode(Str::after(Str::before($output, ";\n\n"), ' = '), true);
+        $ziggy = json_decode(Str::after(Str::before($output, ';' . PHP_EOL), ' = '), true);
 
         $this->assertCount(4, $ziggy['routes']);
         $this->assertArrayHasKey('posts.index', $ziggy['routes']);
@@ -50,13 +50,12 @@ class BladeRouteGeneratorTest extends TestCase
         (new BladeRouteGenerator)->generate();
         $script = (new BladeRouteGenerator)->generate();
 
-        $payload = json_decode(Str::after(Str::before($script, ";\n\n"), 'routes = '), true);
         $this->assertSame([
             'posts.index' => [
                 'uri' => 'posts',
                 'methods' => ['GET', 'HEAD'],
             ],
-        ], $payload);
+        ], json_decode(Str::after(Str::before($script, ';' . PHP_EOL), 'routes = '), true));
     }
 
     /** @test */
@@ -112,7 +111,7 @@ class BladeRouteGeneratorTest extends TestCase
 
         BladeRouteGenerator::$generated = false;
         $output = (new BladeRouteGenerator)->generate('guest');
-        $ziggy = json_decode(Str::after(Str::before($output, ";\n\n"), ' = '), true);
+        $ziggy = json_decode(Str::after(Str::before($output, ';' . PHP_EOL), ' = '), true);
 
         $this->assertCount(2, $ziggy['routes']);
         $this->assertArrayHasKey('posts.index', $ziggy['routes']);
@@ -120,7 +119,7 @@ class BladeRouteGeneratorTest extends TestCase
 
         BladeRouteGenerator::$generated = false;
         $output = (new BladeRouteGenerator)->generate(['guest', 'admin']);
-        $ziggy = json_decode(Str::after(Str::before($output, ";\n\n"), ' = '), true);
+        $ziggy = json_decode(Str::after(Str::before($output, ';' . PHP_EOL), ' = '), true);
 
         $this->assertCount(3, $ziggy['routes']);
         $this->assertArrayHasKey('posts.index', $ziggy['routes']);

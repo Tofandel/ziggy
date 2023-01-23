@@ -33,8 +33,7 @@ You can run PHP tests with `vendor/bin/phpunit` and JavaScript tests with `npm t
 
 If you need any help with this please don't hesitate to ask.
 
-> :warning: If your filesystem uses CRLF instead of LF you may run into some issues when running the tests
-> You can run `find . -type f -not -path "./vendor" -not -path "./node_modules" -exec grep -qIP '\r$' {} ';' -exec perl -pi -e 's/\r\n/\n/g' {} '+'` to restore files back to LF
+> If your filesystem uses `CRLF` instead of `LF` line endings (e.g. Windows) you may see errors related to that when running tests. To fix this you can run `git config --global core.autocrlf input` to configure Git to preserve the line endings from the repository when cloning. You may have to clone this repository again.
 
 ## Requirements
 
