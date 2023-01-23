@@ -545,6 +545,13 @@ describe('route()', () => {
         deepEqual(route().params, { event: '1', venue: '2' });
     });
 
+    test('can extract encoded parameters from the current URL', () => {
+        global.window.location.href = 'https://ziggy.dev/events/1/venues/1%2B2%263';
+        global.window.location.pathname = '/events/1/venues/1%2B2%263';
+
+        deepEqual(route().params, { event: '1', venue: '1+2&3' });
+    });
+
     test('can extract query parameters from the current URL', () => {
         global.window.location.href = 'https://ziggy.dev/posts/1?guest[name]=Taylor';
         global.window.location.host = 'ziggy.dev';
@@ -553,11 +560,11 @@ describe('route()', () => {
 
         deepEqual(route().params, { post: '1', guest: { name: 'Taylor' } });
 
-        global.window.location.href = 'https://ziggy.dev/events/1/venues/2?id=5&vip=0';
+        global.window.location.href = 'https://ziggy.dev/events/1/venues/2?id=5&vip=1%2B2%263';
         global.window.location.pathname = '/events/1/venues/2';
-        global.window.location.search = '?id=5&vip=0';
+        global.window.location.search = '?id=5&vip=1%2B2%263';
 
-        deepEqual(route().params, { event: '1', venue: '2', id: '5', vip: '0' });
+        deepEqual(route().params, { event: '1', venue: '2', id: '5', vip: '1+2&3' });
     });
 
     test("can append 'extra' string/number parameter to query", () => {
@@ -1041,7 +1048,7 @@ describe('current()', () => {
         same(route().current('events.venues.*'), false);
     });
 
-    test.skip('can unresolve arbitrary urls to names and params', () => {
+    test('can unresolve arbitrary urls to names and params', () => {
         const resolved = route().unresolve('https://ziggy.dev/events/1/venues?test=yes');
         deepEqual(resolved, { name: 'events.venues.index', params: {event: '1'}, query: {test: 'yes'}, route: resolved.route });
         same(resolved.route.uri, 'events/{event}/venues');
