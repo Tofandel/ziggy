@@ -76,8 +76,9 @@ export default class Route {
 
         if (matches) {
             const params = {};
-            Object.keys(matches.groups).forEach(k => params[k] = decodeURIComponent(matches.groups[k]));
-
+            if (matches.groups) {
+                Object.keys(matches.groups).forEach(k => params[k] = typeof matches.groups[k] === 'string' ? decodeURIComponent(matches.groups[k]) : matches.groups[k]);
+            }
             return { params, query: parse(query) };
         }
 

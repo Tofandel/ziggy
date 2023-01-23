@@ -7,7 +7,10 @@ import route from '../../src/js';
 
 const defaultWindow = {
     location: {
+        protocol: 'https:',
         host: 'ziggy.dev',
+        search: '',
+        hash: '',
     },
 };
 
